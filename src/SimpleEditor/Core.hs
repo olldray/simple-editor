@@ -44,7 +44,51 @@ parseCommand str =
 processCommands
   :: [Command]
   -> [Char]
-processCommands _commands = ['u','r']
+processCommands commands =
+  let
+    finalState = foldr processCommand emptyState commands
+  in
+    reverse $ psOutput finalState
+
+processCommand
+  :: Command
+  -> ProcessingState
+  -> ProcessingState
+processCommand cmd state =
+  case cmd of
+    DoAction action -> processAction action state
+    Print k -> processPrint k state
+    Undo -> processUndo state
+
+processAction
+  :: Action
+  -> ProcessingState
+  -> ProcessingState
+processAction = flip const
+
+processPrint
+  :: Int
+  -> ProcessingState
+  -> ProcessingState
+processPrint = flip const
+
+processUndo
+  :: ProcessingState
+  -> ProcessingState
+processUndo = id
+
+data ProcessingState = ProcessingState
+  { psS :: [Char]
+  , psUndo :: [Action]
+  , psOutput :: [Char]
+  }
+
+emptyState :: ProcessingState
+emptyState = ProcessingState
+                { psS = []
+                , psUndo = []
+                , psOutput = []
+                }
 
 data Command =
     DoAction Action

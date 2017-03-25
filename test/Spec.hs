@@ -22,9 +22,9 @@ main = hspec $ do
       result `shouldBe` [DoAction (Append "a"), Print 1]
 
   describe "process commands" $ do
-    it "process one of each" $ do
+    it "process a few" $ do
       let result = processCommands oneOfEach
-      result `shouldBe` ['w']
+      result `shouldBe` ['s', 'q', 'w']
 
   describe "parseCommand" $ do
     it "parse append" $ do
@@ -42,7 +42,17 @@ main = hspec $ do
 oneChar = FakeShellState { fssSTDIN = ["2", "1 a", "3 1"], fssSTDOUT = [] }
 oneCharResult = FakeShellState { fssSTDIN = [], fssSTDOUT = ["a"] }
 
-oneOfEach = [DoAction (Append "wowsers"), DoAction (Delete 6), Undo, Print 3]
+oneOfEach = [ DoAction (Append "wow")
+            , DoAction (Append "sers")
+            , Print 4
+            , DoAction (Delete 6)
+            , DoAction (Append "nquy")
+            , Print 4
+            , Undo
+            , Undo
+            , Undo
+            , Print 3
+            ]
 
 runApplication :: FakeShellState -> FakeShellState
 runApplication =
