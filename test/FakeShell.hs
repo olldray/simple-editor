@@ -3,13 +3,14 @@
 module FakeShell
   ( FakeShell (..)
   , FakeShellState (..)
+  , unFake
   ) where
 
-import SimpleEditor.Shell
-import Control.Monad.State.Lazy ( State (..)
+import Control.Monad.State.Lazy ( State
                                 , gets
                                 , modify
                                 )
+import SimpleEditor.Shell
 
 data FakeShellState = FakeShellState
   { fssSTDIN :: [String]
@@ -19,6 +20,9 @@ data FakeShellState = FakeShellState
 
 newtype FakeShell a = FakeShell (State FakeShellState a)
   deriving (Monad, Applicative, Functor)
+
+unFake :: FakeShell t -> State FakeShellState t
+unFake (FakeShell x) = x
 
 instance Shell FakeShell where
   getLn = FakeShell $ do

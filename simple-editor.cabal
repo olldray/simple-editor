@@ -14,6 +14,7 @@ extra-source-files:  README.md
 cabal-version:       >=1.10
 
 library
+  ghc-options: -Wall -Werror
   hs-source-dirs:      src
   exposed-modules:
     SimpleEditor.Core
@@ -31,6 +32,7 @@ executable simple-editor
 
 test-suite simple-editor-test
   type:                exitcode-stdio-1.0
+  ghc-options: -Wall -Wwarn -fno-warn-missing-signatures
   hs-source-dirs:      test
   other-modules:
     FakeShell
