@@ -26,6 +26,23 @@ main = hspec $ do
       let result = processCommands oneOfEach
       result `shouldBe` ['s', 'q', 'w']
 
+  describe "process individual command" $ do
+    it "process an append" $ do
+      let final = processAction (Append "bar") $ ProcessingState "of" 2 [Delete 2] []
+      final `shouldBe` ProcessingState "rabof" 5 [Delete 3, Delete 2] []
+
+    it "process a delete" $ do
+      let final = processAction (Delete 4) $ ProcessingState "raboof" 6 [Delete 3, Delete 3] []
+      final `shouldBe` ProcessingState "of" 2 [Append "obar", Delete 3, Delete 3] []
+
+    it "process a print" $ do
+      let final = processPrint 4 $ ProcessingState "raboof" 6 [Delete 3, Delete 3] []
+      final `shouldBe` ProcessingState "raboof" 6 [Delete 3, Delete 3] ['b']
+
+    it "process an undo append" $ do
+      let final = processUndo $ ProcessingState "raboof" 6 [Delete 3, Delete 3] []
+      final `shouldBe` ProcessingState "oof" 3 [Delete 3] []
+
   describe "parseCommand" $ do
     it "parse append" $ do
       parseCommand "1 abc" `shouldBe` DoAction (Append "abc")
@@ -47,7 +64,7 @@ oneOfEach = [ DoAction (Append "wow")
             , Print 4
             , DoAction (Delete 6)
             , DoAction (Append "nquy")
-            , Print 4
+            , Print 3
             , Undo
             , Undo
             , Undo

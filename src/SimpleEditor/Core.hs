@@ -46,7 +46,7 @@ processCommands
   -> [Char]
 processCommands commands =
   let
-    finalState = foldr processCommand emptyState commands
+    finalState = foldl (flip processCommand) emptyState commands
   in
     reverse $ psOutput finalState
 
@@ -64,28 +64,60 @@ processAction
   :: Action
   -> ProcessingState
   -> ProcessingState
-processAction = flip const
+processAction action state = applyAction action state
+
+applyAction
+  :: Action
+  -> ProcessingState
+  -> ProcessingState
+applyAction (Append str) state =
+  let
+    newS = foldl (flip (:)) (psS state) str
+    newL = length str + psLength state
+    newUndo = (Delete $ length str) : psUndo state
+  in
+    state { psS = newS, psLength = newL, psUndo = newUndo }
+applyAction (Delete k) state =
+  let
+    (deleted, remainder) = splitAt k $ psS state
+    newL = psLength state - k
+    newUndo = (Append $ reverse deleted) : psUndo state
+  in
+    state { psS = remainder, psLength = newL, psUndo = newUndo }
 
 processPrint
   :: Int
   -> ProcessingState
   -> ProcessingState
-processPrint = flip const
+processPrint k state =
+  let
+    i = psLength state - k
+    newOut = (psS state !! i) : psOutput state
+  in
+    state { psOutput = newOut }
 
 processUndo
   :: ProcessingState
   -> ProcessingState
-processUndo = id
+processUndo state =
+  let
+    (action:rest) = psUndo state -- irrefutable pattern match
+    newState = processAction action state
+  in
+    newState { psUndo = rest }
 
 data ProcessingState = ProcessingState
   { psS :: [Char]
+  , psLength :: Int
   , psUndo :: [Action]
   , psOutput :: [Char]
   }
+  deriving (Show, Eq)
 
 emptyState :: ProcessingState
 emptyState = ProcessingState
                 { psS = []
+                , psLength = 0
                 , psUndo = []
                 , psOutput = []
                 }
@@ -97,6 +129,6 @@ data Command =
   deriving (Show, Eq)
 
 data Action =
-    Append String
+    Append [Char]
   | Delete Int
   deriving (Show, Eq)
