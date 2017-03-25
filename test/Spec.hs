@@ -5,8 +5,10 @@ import Control.Monad.State.Lazy ( execState
                                 )
 import FakeShell
 import SimpleEditor.Core
+import SimpleEditor.Parse
+import SimpleEditor.Process
+import SimpleEditor.Types
 import Test.Hspec
-import Test.QuickCheck
 
 
 main :: IO ()
