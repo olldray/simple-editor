@@ -3,6 +3,8 @@ module Main where
 import Control.Monad.State.Lazy ( execState
                                 , evalState
                                 )
+import Data.Monoid ( (<>) )
+
 import FakeShell
 import SimpleEditor.Core
 import SimpleEditor.Parse
@@ -17,6 +19,10 @@ main = hspec $ do
     it "append and print one character" $ do
       let result = runApplication oneChar
       result `shouldBe` oneCharResult
+
+    it "enormous test" $ do
+      let result = runApplication enormous
+      result `shouldBe` enormousResult
 
   describe "parseSTDIN" $ do
     it "parse series of commands" $ do
@@ -60,6 +66,16 @@ main = hspec $ do
 
 oneChar = FakeShellState { fssSTDIN = ["2", "1 a", "3 1"], fssSTDOUT = [] }
 oneCharResult = FakeShellState { fssSTDIN = [], fssSTDOUT = ["a"] }
+
+bigStr = take 999999 $ cycle "areallylongstring"
+enorInput = concat [ [ "1000000"
+                     , "1 " <> bigStr ]
+                   , replicate 499999 "2 1"
+                   , replicate 499999 "4"
+                   , [ "3 1" ]
+                   ]
+enormous = FakeShellState { fssSTDIN = enorInput, fssSTDOUT = [] }
+enormousResult = FakeShellState { fssSTDIN = [], fssSTDOUT = ["a"] }
 
 oneOfEach = [ DoAction (Append "wow")
             , DoAction (Append "sers")
