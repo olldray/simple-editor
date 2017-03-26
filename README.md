@@ -49,6 +49,8 @@ It became clear that a quite nice solution could be had by storing the
 The problem statement was quite clear that it was trying to let us
  off the hook for input validation. I attempted to take advantage of
  that assurance, but it felt pretty unnatural in Haskell. I ended up
+ not even using a Parser monad because they are all designed with
+ failure as a posibility. I also ended up
  with most of the functions in this project being partial, which
  sucks. So most things could afford to be wrapped in `Either`s or
  `ExceptT`s.
