@@ -1,11 +1,13 @@
 Build with `stack build` or `stack install`
+
 Run tests with `stack test`
 
+## Brief Description
 `simple-editor` provides an implementation of the specifications
  layed out in https://www.hackerrank.com/challenges/simple-text-editor
 
 
-Basic design:
+## Basic design:
 
 The main idea is to process the commands one at a time.
 
@@ -15,7 +17,7 @@ For `append` and `delete` actions, perform the action on the internal
  it to S.
 
 
-Notes on the design process:
+## Notes on the design process:
 
 There can be at most 10^6 commands. Of which half can be `undo()`.
 
@@ -42,7 +44,7 @@ It became clear that a quite nice solution could be had by storing the
  undoing previous deletes.
 
 
-Where to go from here:
+## Where to go from here:
 
 The problem statement was quite clear that it was trying to let us
  off the hook for input validation. I attempted to take advantage of
